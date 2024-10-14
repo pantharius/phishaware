@@ -27,7 +27,7 @@ export const ConnectionProvider = ({ children }: ConnectionProviderProps) => {
   return (
     <ConnectionContext.Provider
       value={{
-        user: { name: "" } || null,
+        user: { name: "" },
         login: async () => {},
         logout: async () => {},
       }}

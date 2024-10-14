@@ -38,7 +38,7 @@ const steps: Step[] = [
         schema: z.string().email({ message: "Adresse e-mail invalide" }),
       },
     },
-    nextStep: async (data: any) => {
+    nextStep: async () => {
       try {
         return "nom";
       } catch (error) {
