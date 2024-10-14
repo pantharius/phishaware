@@ -10,21 +10,37 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import InputMask from "react-input-mask";
+import { ScriptProps } from "next/script";
+
+export type DynamicFormField = {
+  label?: string;
+  placeholder?: string;
+  schema: ZodSchema<any>;
+  mask?: string;
+  maskChar?: string;
+};
 
 interface DynamicFormProps<T extends FieldValues> {
-  schema: ZodSchema<T>;
-  labels?: Record<string, string>;
+  dFields: Record<string, DynamicFormField>;
   onSubmit: SubmitHandler<T>;
   formId: string;
+  inlineFields?: (string[] | string)[];
 }
 
 export const DynamicForm = <T extends Record<string, any>>({
-  schema,
-  labels,
+  dFields,
   onSubmit,
   formId,
+  inlineFields = [],
 }: DynamicFormProps<T>) => {
-  // Hook de formulaire avec validation Zod
+  const schema = z.object(
+    Object.keys(dFields).reduce(
+      (a, c) => ({ ...a, ...{ [c]: dFields[c].schema } }),
+      {} as z.ZodRawShape
+    )
+  );
+
   const form = useForm<T>({
     resolver: zodResolver(schema),
   });
@@ -49,13 +65,85 @@ export const DynamicForm = <T extends Record<string, any>>({
 
   const fields = zodKeys(schema);
 
-  // Fonction pour détecter le type de champ
   const getFieldType = (field: any): string => {
+    if (field instanceof z.ZodEffects) field = field._def.schema;
     if (field instanceof z.ZodString) return "string";
     if (field instanceof z.ZodNumber) return "number";
     if (field instanceof z.ZodBoolean) return "boolean";
-    // Ajoute d'autres types Zod si nécessaire
     return "unknown";
+  };
+
+  const formatField = (fieldName: string) => {
+    const field = (schema as any).shape[fieldName];
+    const fieldType = getFieldType(field);
+    const fieldProps = dFields?.[fieldName];
+
+    return (
+      <FormField
+        name={fieldName}
+        key={fieldName}
+        render={({ field }) => (
+          <FormItem className="flex-1">
+            <FormLabel className="text-white" htmlFor={"input-" + fieldName}>
+              {fieldProps.label || fieldName}
+            </FormLabel>
+            <FormControl>
+              <>
+                {(fieldType === "string" || fieldType === "number") &&
+                  (fieldProps?.mask ? (
+                    <InputMask
+                      type={fieldType === "string" ? "text" : "number"}
+                      id={"input-" + fieldName}
+                      {...form.register(field.name as Path<T>)}
+                      aria-invalid={
+                        form.formState.errors[fieldName] ? "true" : "false"
+                      }
+                      aria-describedby={`${fieldName}-error`}
+                      mask={fieldProps?.mask}
+                      maskChar={fieldProps?.maskChar}
+                    >
+                      {
+                        ((inputProps: ScriptProps) => (
+                          <Input
+                            type="text"
+                            id={"input-" + fieldName}
+                            {...form.register(field.name as Path<T>)}
+                            placeholder={fieldProps.placeholder}
+                            aria-invalid={
+                              form.formState.errors[fieldName]
+                                ? "true"
+                                : "false"
+                            }
+                            aria-describedby={`${fieldName}-error`}
+                          />
+                        )) as any
+                      }
+                    </InputMask>
+                  ) : (
+                    <Input
+                      type="text"
+                      id={"input-" + fieldName}
+                      placeholder={fieldProps.placeholder}
+                      {...form.register(field.name as Path<T>)}
+                      aria-invalid={
+                        form.formState.errors[fieldName] ? "true" : "false"
+                      }
+                      aria-describedby={`${fieldName}-error`}
+                    />
+                  ))}
+              </>
+            </FormControl>
+            <FormMessage>
+              {form.formState.errors[fieldName] && (
+                <p id={`${fieldName}-error`} className="text-red-600 text-sm">
+                  {(form.formState.errors[fieldName] as any).message}
+                </p>
+              )}
+            </FormMessage>
+          </FormItem>
+        )}
+      />
+    );
   };
 
   return (
@@ -65,63 +153,15 @@ export const DynamicForm = <T extends Record<string, any>>({
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-4 py-2"
       >
-        {fields.map((fieldName) => {
-          const field = (schema as any).shape[fieldName];
-          const fieldType = getFieldType(field);
-
-          return (
-            <FormField
-              name={fieldName}
-              key={fieldName}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel
-                    className="text-white"
-                    htmlFor={"input-" + fieldName}
-                  >
-                    {labels?.[fieldName] || fieldName}
-                  </FormLabel>
-                  <FormControl>
-                    <>
-                      {fieldType === "string" && (
-                        <Input
-                          type="text"
-                          id={"input-" + fieldName}
-                          {...form.register(field.name as Path<T>)}
-                          aria-invalid={
-                            form.formState.errors[fieldName] ? "true" : "false"
-                          }
-                          aria-describedby={`${fieldName}-error`}
-                        />
-                      )}
-                      {fieldType === "number" && (
-                        <Input
-                          type="number"
-                          id={"input-" + fieldName}
-                          {...form.register(fieldName as Path<T>)}
-                          aria-invalid={
-                            form.formState.errors[fieldName] ? "true" : "false"
-                          }
-                          aria-describedby={`${fieldName}-error`}
-                        />
-                      )}
-                    </>
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors[fieldName] && (
-                      <p
-                        id={`${fieldName}-error`}
-                        className="text-red-600 text-sm"
-                      >
-                        {(form.formState.errors[fieldName] as any).message}
-                      </p>
-                    )}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-          );
-        })}
+        {inlineFields.length > 0
+          ? inlineFields.map((rowFields, rowIndex) => (
+              <div className="flex gap-4" key={`row-${rowIndex}`}>
+                {(Array.isArray(rowFields) ? rowFields : [rowFields]).map(
+                  formatField
+                )}
+              </div>
+            ))
+          : fields.map(formatField)}
       </form>
     </Form>
   );
