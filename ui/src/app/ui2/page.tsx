@@ -53,7 +53,7 @@ export default function Home() {
 
       <div className="text-center">
         <Button asChild size="lg" variant={"default"}>
-          <Link href="/ui2/inscription">Commencer votre formation</Link>
+          <Link href="/ui2/sign">Commencer votre formation</Link>
         </Button>
       </div>
     </div>
