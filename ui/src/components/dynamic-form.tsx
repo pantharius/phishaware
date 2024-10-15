@@ -1,4 +1,10 @@
-import { useForm, SubmitHandler, FieldValues, Path } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  FieldValues,
+  Path,
+  ControllerRenderProps,
+} from "react-hook-form";
 import { z, ZodSchema } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,6 +18,16 @@ import {
 import { Input } from "@/components/ui/input";
 import InputMask from "react-input-mask";
 import { ScriptProps } from "next/script";
+import { Textarea } from "@/components/ui/textarea";
+
+export type DynamicFormInputType =
+  | "textarea"
+  | "email"
+  | "string"
+  | "number"
+  | "boolean"
+  | "enum"
+  | "unknown";
 
 export type DynamicFormField = {
   label?: string;
@@ -19,6 +35,7 @@ export type DynamicFormField = {
   schema: ZodSchema<any>;
   mask?: string;
   maskChar?: string;
+  type?: DynamicFormInputType;
 };
 
 interface DynamicFormProps<T extends FieldValues> {
@@ -65,12 +82,68 @@ export const DynamicForm = <T extends Record<string, any>>({
 
   const fields = zodKeys(schema);
 
-  const getFieldType = (field: any): string => {
+  const getFieldType = (field: any): DynamicFormInputType => {
     if (field instanceof z.ZodEffects) field = field._def.schema;
     if (field instanceof z.ZodString) return "string";
     if (field instanceof z.ZodNumber) return "number";
     if (field instanceof z.ZodBoolean) return "boolean";
     return "unknown";
+  };
+
+  const renderField = (
+    field: ControllerRenderProps<FieldValues, string>,
+    fieldName: string,
+    fieldType: DynamicFormInputType,
+    fieldProps: DynamicFormField
+  ) => {
+    const type = fieldProps.type || fieldType;
+    switch (type) {
+      case "email":
+      case "number":
+      case "string":
+        return fieldProps?.mask ? (
+          <InputMask
+            type={fieldType === "string" ? "text" : "number"}
+            id={"input-" + fieldName}
+            {...form.register(field.name as Path<T>)}
+            aria-invalid={form.formState.errors[fieldName] ? "true" : "false"}
+            aria-describedby={`${fieldName}-error`}
+            mask={fieldProps?.mask}
+            maskChar={fieldProps?.maskChar}
+          >
+            {
+              ((inputProps: ScriptProps) => (
+                <Input
+                  type="text"
+                  id={"input-" + fieldName}
+                  {...form.register(field.name as Path<T>)}
+                  placeholder={fieldProps.placeholder}
+                  aria-invalid={
+                    form.formState.errors[fieldName] ? "true" : "false"
+                  }
+                  aria-describedby={`${fieldName}-error`}
+                />
+              )) as any
+            }
+          </InputMask>
+        ) : (
+          <Input
+            type="text"
+            id={"input-" + fieldName}
+            placeholder={fieldProps.placeholder}
+            {...form.register(field.name as Path<T>)}
+            aria-invalid={form.formState.errors[fieldName] ? "true" : "false"}
+            aria-describedby={`${fieldName}-error`}
+          />
+        );
+      case "textarea":
+        return <Textarea rows={4}></Textarea>;
+      case "boolean":
+      case "enum":
+      case "unknown":
+      default:
+        return <></>;
+    }
   };
 
   const formatField = (fieldName: string) => {
@@ -88,50 +161,7 @@ export const DynamicForm = <T extends Record<string, any>>({
               {fieldProps.label || fieldName}
             </FormLabel>
             <FormControl>
-              <>
-                {(fieldType === "string" || fieldType === "number") &&
-                  (fieldProps?.mask ? (
-                    <InputMask
-                      type={fieldType === "string" ? "text" : "number"}
-                      id={"input-" + fieldName}
-                      {...form.register(field.name as Path<T>)}
-                      aria-invalid={
-                        form.formState.errors[fieldName] ? "true" : "false"
-                      }
-                      aria-describedby={`${fieldName}-error`}
-                      mask={fieldProps?.mask}
-                      maskChar={fieldProps?.maskChar}
-                    >
-                      {
-                        ((inputProps: ScriptProps) => (
-                          <Input
-                            type="text"
-                            id={"input-" + fieldName}
-                            {...form.register(field.name as Path<T>)}
-                            placeholder={fieldProps.placeholder}
-                            aria-invalid={
-                              form.formState.errors[fieldName]
-                                ? "true"
-                                : "false"
-                            }
-                            aria-describedby={`${fieldName}-error`}
-                          />
-                        )) as any
-                      }
-                    </InputMask>
-                  ) : (
-                    <Input
-                      type="text"
-                      id={"input-" + fieldName}
-                      placeholder={fieldProps.placeholder}
-                      {...form.register(field.name as Path<T>)}
-                      aria-invalid={
-                        form.formState.errors[fieldName] ? "true" : "false"
-                      }
-                      aria-describedby={`${fieldName}-error`}
-                    />
-                  ))}
-              </>
+              <>{renderField(field, fieldName, fieldType, fieldProps)}</>
             </FormControl>
             <FormMessage>
               {form.formState.errors[fieldName] && (

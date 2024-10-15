@@ -180,9 +180,9 @@ const InscriptionForm: FC = () => {
     if (success === true) {
       let nextstep = steps.findIndex((x) => x.name == stepname);
       if (nextstep + 1 < steps.length) nextstep++;
-      router.push(`/ui2/sign/${steps[nextstep].name}`);
+      router.push(`/sign/${steps[nextstep].name}`);
     } else if (success) {
-      router.push(`/ui2/sign/${success}`);
+      router.push(`/sign/${success}`);
     } else {
       setError("Validation échouée.");
     }
@@ -205,7 +205,7 @@ const InscriptionForm: FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md bg-gray-800 border-gray-700">
+    <Card className="w-full max-w-md bg-gray-800 border-gray-700 bg-opacity-90">
       <CardHeader className="pb-3">
         <CardTitle className="text-2xl text-white">{step.title}</CardTitle>
         {step.topDescription && (
