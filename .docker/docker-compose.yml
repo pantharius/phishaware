@@ -1,0 +1,14 @@
+name: postgres-phish_aware
+services:
+  postgres:
+    image: postgres:16.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5555:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./setup.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./sql:/sql

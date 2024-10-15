@@ -3,6 +3,7 @@
 
 # misc
 .DS_Store
+/.docker/postgres-data
 *.pem
 
 # debug
