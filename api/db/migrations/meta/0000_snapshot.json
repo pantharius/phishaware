@@ -1,5 +1,5 @@
 {
-  "id": "3bec8437-0a1b-4fc6-a5a2-c6054a5fd33d",
+  "id": "c7e0bfed-b84d-4435-b81f-c7934bebca1b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,9 +10,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
@@ -20,17 +21,65 @@
           "primaryKey": false,
           "notNull": true
         },
-        "name": {
-          "name": "name",
+        "email_code": {
+          "name": "email_code",
+          "type": "varchar(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_verified_at": {
+          "name": "email_verified_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "firstname": {
+          "name": "firstname",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "step": {
-          "name": "step",
-          "type": "varchar(50)",
+        "lastname": {
+          "name": "lastname",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_code": {
+          "name": "phone_code",
+          "type": "varchar(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credit_card_number": {
+          "name": "credit_card_number",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credit_card_expiry": {
+          "name": "credit_card_expiry",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credit_card_cvv": {
+          "name": "credit_card_cvv",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

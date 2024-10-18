@@ -5,3 +5,5 @@ WITH
 
 -- Accorder tous les privilèges sur la base de données actuelle à l'utilisateur
 GRANT ALL PRIVILEGES ON DATABASE phish_aware TO phishAwAreU5ld1m09;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

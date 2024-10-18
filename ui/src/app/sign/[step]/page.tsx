@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { DynamicForm, DynamicFormField } from "@/components/dynamic-form";
 import { z } from "zod";
 import { SubmitHandler } from "react-hook-form";
+import { confirmEmail, registerUser, updateUser } from "@/lib/api/users";
+import api from "@/lib/api";
 
 type Step = {
   name: string;
@@ -38,29 +40,68 @@ const steps: Step[] = [
         schema: z.string().email({ message: "Adresse e-mail invalide" }),
       },
     },
-    nextStep: async () => {
+    nextStep: async ({ email }) => {
       try {
-        return "nom";
+        if (!email) return false;
+        const response = await registerUser(api, email);
+        if (response && response.id) {
+          localStorage.setItem("userId", response.id);
+          return "confirm-email";
+        }
       } catch (error) {
-        console.error("Erreur lors de la validation du backend :", error);
-        return false; // En cas d'erreur, retourne false
+        console.error("Erreur lors de l'enregistrement de l'email :", error);
       }
+      return false;
     },
-    submitButton: "Confirmer l'inscription",
+    submitButton: "Continuer",
+  },
+  {
+    name: "confirm-email",
+    title: "Validez votre addresse mail",
+    topDescription:
+      "Vous avez reçu un code dans votre boite de réception, entrez le ici pour poursuivre.",
+    fields: {
+      code: {
+        label: "Code de vérification",
+        schema: z
+          .string()
+          .min(6, { message: "Votre code contient exactement 6 caractères" })
+          .max(6, { message: "Votre code contient exactement 6 caractères" }),
+        mask: "999999",
+        type: "otp",
+      },
+    },
+    nextStep: async ({ code }) => {
+      try {
+        if (!code) {
+          return false; // Si userId ou code manquent, retourne false
+        }
+        const userId = localStorage.getItem("userId");
+        if (!userId) return "email";
+        const response = await confirmEmail(api, userId, code);
+        if (response) {
+          return "nom";
+        }
+
+        return false; // Retourne false en cas d'échec
+      } catch (error) {
+        console.error("Erreur lors de la confirmation de l'email :", error);
+      }
+      return false;
+    },
   },
   {
     name: "nom",
     title: "Complétez votre profil",
     topDescription: "Entrez votre nom pour personnaliser votre expérience",
-    nextStep: 2,
     fields: {
-      firstName: {
+      firstname: {
         label: "Prénom",
         schema: z
           .string()
           .min(2, { message: "Votre prénom contient au moins 2 caractères" }),
       },
-      lastName: {
+      lastname: {
         label: "Nom de famille",
         placeholder: "",
         schema: z
@@ -68,7 +109,32 @@ const steps: Step[] = [
           .min(2, { message: "Votre nom contient au moins 2 caractères" }),
       },
     },
-    submitButton: "Confirmer l'inscription",
+    nextStep: async ({ firstname, lastname }) => {
+      try {
+        if (!firstname || !lastname) {
+          return false;
+        }
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) return "email";
+        const response = await updateUser(api, userId, {
+          firstname,
+          lastname,
+        });
+        if (response) {
+          return "phone";
+        }
+
+        return false;
+      } catch (error) {
+        console.error(
+          "Erreur lors de la mise à jour du nom et prénom :",
+          error
+        );
+      }
+      return false;
+    },
+    submitButton: "Continuer",
   },
   {
     name: "phone",
@@ -89,15 +155,63 @@ const steps: Step[] = [
           ),
       },
     },
-    submitButton: "Confirmer l'inscription",
+    nextStep: async ({ phone }) => {
+      try {
+        if (!phone) return false; // Si l'ID ou le numéro de téléphone manquent, retourne false
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) return "email";
+        const response = await updateUser(api, userId, { phone });
+
+        if (response) {
+          return "address"; // Passer à l'étape suivante pour confirmer le téléphone
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement du téléphone :", error);
+      }
+
+      return false;
+    },
+    submitButton: "Continuer",
   },
   {
-    name: "card",
+    name: "address",
+    title: "",
+    topDescription: "",
+    fields: {
+      address: {
+        label: "Adresse complete",
+        schema: z
+          .string()
+          .min(6, { message: "Votre adresse contient plus de 6 caractères" }),
+      },
+    },
+    nextStep: async ({ address }) => {
+      try {
+        if (!address) return false;
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) return "email";
+        const response = await updateUser(api, userId, { address });
+
+        if (response) return "credit-card";
+      } catch (error) {
+        console.error(
+          "Erreur lors de l'enregistrement de l'adresse postale :",
+          error
+        );
+      }
+
+      return false;
+    },
+  },
+  {
+    name: "credit-card",
     title: "Confirmation de l'inscription",
     topDescription:
       "Pour finaliser votre inscription, veuillez vérifier vos informations de paiement.",
     fields: {
-      cardNumber: {
+      credit_card_number: {
         label: "Numéro de carte",
         placeholder: "1234 5678 9012 3456",
         schema: z.string().regex(/^(\d{4}[ ]?){4}$/, {
@@ -106,7 +220,7 @@ const steps: Step[] = [
         mask: "9999 9999 9999 9999",
         maskChar: " ",
       },
-      expiry: {
+      credit_card_expiry: {
         label: "Date d'expiration",
         placeholder: "MM/AA",
         schema: z
@@ -133,7 +247,7 @@ const steps: Step[] = [
           ),
         mask: "99/99",
       },
-      cvv: {
+      credit_card_cvv: {
         label: "CVV",
         placeholder: "123",
         schema: z
@@ -146,8 +260,38 @@ const steps: Step[] = [
         mask: "999",
       },
     },
-    inlineFields: ["cardNumber", ["expiry", "cvv"]],
+    inlineFields: [
+      "credit_card_number",
+      ["credit_card_expiry", "credit_card_cvv"],
+    ],
     submitButton: "Confirmer l'inscription",
+    nextStep: async ({
+      credit_card_number,
+      credit_card_expiry,
+      credit_card_cvv,
+    }) => {
+      try {
+        if (!credit_card_number || !credit_card_expiry || !credit_card_cvv)
+          return false;
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) return "email";
+        const response = await updateUser(api, userId, {
+          credit_card_number: credit_card_number.replace(/\s+/g, ""),
+          credit_card_expiry,
+          credit_card_cvv,
+        });
+
+        if (response) return "complete";
+      } catch (error) {
+        console.error(
+          "Erreur lors de l'enregistrement de la carte bancaire :",
+          error
+        );
+      }
+
+      return false;
+    },
     bottomDescription:
       "Aucun montant ne sera débité à ce stade, cette étape nous permet simplement de valider vos coordonnées pour des raisons de sécurité et de prévenir toute activité frauduleuse.",
   },

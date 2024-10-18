@@ -12,10 +12,10 @@ export default function Nav() {
         <Link href="/" className="text-2xl uppercase font-bold text-blue-300">
           Phish Aware
         </Link>
-        <div className="space-x-4">
+        <div className="flex flex-nowrap gap-0 md:gap-4 lg:gap-8">
           <Button
             variant="ghost"
-            size={"lg"}
+            size={"default"}
             asChild
             className={cn(
               "uppercase text-slate-300",
@@ -26,7 +26,7 @@ export default function Nav() {
           </Button>
           <Button
             variant="ghost"
-            size={"lg"}
+            size={"default"}
             asChild
             className={cn(
               "uppercase text-slate-300",
@@ -37,7 +37,7 @@ export default function Nav() {
           </Button>
           <Button
             variant="ghost"
-            size={"lg"}
+            size={"default"}
             asChild
             className={cn(
               "uppercase text-slate-300",

@@ -6,6 +6,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { NestApplicationOptions } from '@nestjs/common';
+import 'dotenv/config';
 
 async function bootstrap() {
   let adapter = new FastifyAdapter() as NestApplicationOptions;
@@ -23,6 +24,14 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: '*', // Autorise toutes les origines, à remplacer en prod
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization', // Spécifie les headers autorisés
+    credentials: true, // Si tu utilises des cookies ou des sessions
+  });
 
   await app.listen(3000);
 }

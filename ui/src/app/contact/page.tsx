@@ -94,7 +94,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="relative z-10 container mx-auto px-4 py-16">
+    <div className="relative z-10 container mx-auto px-4 py-16 m-16">
       <div className="text-center space-y-8 mb-16">
         <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
           Contactez le Nexus Phish Aware
@@ -126,7 +126,7 @@ export default function Contact() {
                 <MapPin className="w-6 h-6 text-blue-400 mr-2" />
                 <p className="text-gray-300">
                   Localisation Quantique:
-                  <span className="text-cyan-400 font-mono">
+                  <span className="text-cyan-400 font-mono ml-2">
                     {quantumLocation}
                   </span>
                 </p>
@@ -135,7 +135,7 @@ export default function Contact() {
                 <Phone className="w-6 h-6 text-green-400 mr-2" />
                 <p className="text-gray-300">
                   Ligne Temporelle:
-                  <span className="text-cyan-400 font-mono">
+                  <span className="text-cyan-400 font-mono ml-2">
                     {quantumPhone}
                   </span>
                 </p>
@@ -144,7 +144,7 @@ export default function Contact() {
                 <Mail className="w-6 h-6 text-yellow-400 mr-2" />
                 <p className="text-gray-300">
                   Email:
-                  <span className="text-cyan-400 font-mono">
+                  <span className="text-cyan-400 font-mono ml-2">
                     {quantumEmail}
                   </span>
                 </p>
@@ -157,8 +157,7 @@ export default function Contact() {
               <p className="text-gray-300">
                 Notre QG existe simultanément dans plusieurs dimensions. Ne
                 soyez pas surpris si votre message arrive avant même que vous ne
-                l'envoyiez ! Les coordonnées changent constamment pour maintenir
-                la stabilité quantique.
+                l'envoyiez !
               </p>
             </div>
           </CardContent>

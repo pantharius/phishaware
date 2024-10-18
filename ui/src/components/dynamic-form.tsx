@@ -19,6 +19,11 @@ import { Input } from "@/components/ui/input";
 import InputMask from "react-input-mask";
 import { ScriptProps } from "next/script";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export type DynamicFormInputType =
   | "textarea"
@@ -27,6 +32,7 @@ export type DynamicFormInputType =
   | "number"
   | "boolean"
   | "enum"
+  | "otp"
   | "unknown";
 
 export type DynamicFormField = {
@@ -98,6 +104,38 @@ export const DynamicForm = <T extends Record<string, any>>({
   ) => {
     const type = fieldProps.type || fieldType;
     switch (type) {
+      case "otp":
+        return (
+          <>
+            <InputOTP
+              id={"input-" + fieldName}
+              maxLength={6}
+              onChange={field.onChange}
+              aria-invalid={form.formState.errors[fieldName] ? "true" : "false"}
+              aria-describedby={`${fieldName}-error`}
+              containerClassName="text-white justify-between !mt-6"
+            >
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={0} />
+              </InputOTPGroup>
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={1} />
+              </InputOTPGroup>
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={2} />
+              </InputOTPGroup>
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={3} />
+              </InputOTPGroup>
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={4} />
+              </InputOTPGroup>
+              <InputOTPGroup>
+                <InputOTPSlot className="text-xl w-11 h-14" index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+          </>
+        );
       case "email":
       case "number":
       case "string":
