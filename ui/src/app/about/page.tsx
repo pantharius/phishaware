@@ -15,6 +15,7 @@ import {
   Cloud,
   Eye,
 } from "lucide-react";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 export default function About() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -33,24 +34,24 @@ export default function About() {
 
   return (
     <div className="relative z-10 container mx-auto px-4 py-16 mt-16">
-      <div className="text-center space-y-8 mb-16">
-        <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
+      <Card className="text-center space-y-8 mb-16 bg-gray-800 border-gray-700 bg-opacity-90 p-6">
+        <CardTitle className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
           Phish Aware: Gardiens du Cyberespace
-        </h1>
-        <p className="text-2xl text-cyan-50 max-w-4xl mx-auto leading-relaxed">
+        </CardTitle>
+        <CardContent className="text-2xl text-cyan-50 max-w-4xl mx-auto leading-relaxed">
           Depuis 2070, Phish Aware redéfinit les frontières de la cybersécurité,
           fusionnant l'intelligence artificielle avancée avec une expertise
           humaine inégalée pour créer un bouclier impénétrable contre les
           menaces du phishing.
-        </p>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-cyan-300">
+        <Card className="space-y-6 bg-gray-800 border-gray-700 bg-opacity-90 p-6">
+          <CardTitle className="text-3xl font-bold text-cyan-300">
             Notre Vision Révolutionnaire
-          </h2>
-          <p className="text-white text-lg">
+          </CardTitle>
+          <CardContent className="text-white text-lg">
             Chez Phish Aware, nous ne nous contentons pas de suivre les
             tendances de la cybersécurité - nous les créons. Notre plateforme de
             simulation avancée est le fruit d'une fusion entre l'intelligence
@@ -58,21 +59,21 @@ export default function About() {
             informatique. Nous visualisons un avenir où chaque interaction
             numérique est sécurisée, où le phishing devient une relique du
             passé.
-          </p>
-        </div>
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-cyan-300">
+          </CardContent>
+        </Card>
+        <Card className="space-y-6 bg-gray-800 border-gray-700 bg-opacity-90 p-6">
+          <CardTitle className="text-3xl font-bold text-cyan-300">
             L'Essence de Phish Aware
-          </h2>
-          <p className="text-white text-lg">
+          </CardTitle>
+          <CardContent className="text-white text-lg">
             Nous sommes plus qu'une simple entreprise de cybersécurité. Nous
             sommes les architectes d'un avenir numérique sûr, où chaque individu
             est armé des connaissances et des outils nécessaires pour naviguer
             en toute confiance dans le cyberespace. Notre approche holistique
             combine technologie de pointe, formation continue et adaptation en
             temps réel aux menaces émergentes.
-          </p>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="space-y-12 mb-20">

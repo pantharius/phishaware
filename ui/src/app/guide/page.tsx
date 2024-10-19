@@ -198,15 +198,15 @@ export default function Guide() {
 
   return (
     <div className="relative z-10 container mx-auto px-4 py-16 m-16">
-      <div className="text-center space-y-8 mb-16">
-        <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
+      <Card className="text-center space-y-8 p-8 bg-gray-800 border-gray-700 bg-opacity-90">
+        <CardTitle className="text-6xl pb-2 font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
           Guide Anti-Phishing Avancé
-        </h1>
-        <p className="text-xl text-cyan-100 max-w-3xl mx-auto leading-relaxed">
+        </CardTitle>
+        <CardContent className="text-xl text-cyan-100 max-w-3xl mx-auto leading-relaxed">
           Découvrez les techniques de phishing et apprenez à vous en protéger
           efficacement.
-        </p>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="space-y-24">
         {phishingTypes.map((type, index) => (

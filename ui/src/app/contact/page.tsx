@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Send, MapPin, Phone, Mail } from "lucide-react";
 import { DynamicForm, DynamicFormField } from "@/components/dynamic-form";
 import { z } from "zod";
@@ -95,15 +95,15 @@ export default function Contact() {
 
   return (
     <div className="relative z-10 container mx-auto px-4 py-16 m-16">
-      <div className="text-center space-y-8 mb-16">
-        <h1 className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
+      <Card className="text-center space-y-8 mb-16 bg-gray-800 border-gray-700 bg-opacity-90 p-6">
+        <CardTitle className="text-6xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-200 animate-pulse">
           Contactez le Nexus Phish Aware
-        </h1>
-        <p className="text-xl text-cyan-100 max-w-3xl mx-auto leading-relaxed">
+        </CardTitle>
+        <CardContent className="text-xl text-cyan-100 max-w-3xl mx-auto leading-relaxed">
           Établissez une connexion quantique avec notre équipe pour toute
           question sur notre technologie anti-phishing du futur.
-        </p>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 overflow-hidden group hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300">
