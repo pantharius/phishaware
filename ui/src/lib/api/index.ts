@@ -1,5 +1,7 @@
 import ky from "ky";
 
+console.log("API URL : ", process.env.API_URL);
+
 export default ky.create({
   prefixUrl: process.env.API_URL,
   headers: {
