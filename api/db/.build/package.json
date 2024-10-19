@@ -1,0 +1,29 @@
+{
+  "name": "phishing-api",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "npm run db",
+    "db": "npm run db:mig && npm run db:up",
+    "db:mig": "drizzle-kit generate",
+    "db:up": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.26.1",
+    "drizzle-orm": "^0.35.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@types/pg": "^8.11.10",
+    "source-map-support": "^0.5.21",
+    "ts-loader": "^9.4.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.3"
+  }
+}
