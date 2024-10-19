@@ -1,7 +1,8 @@
 import ky from "ky";
+import "dotenv/config";
 
 export default ky.create({
-  prefixUrl: "http://localhost:3000/api/",
+  prefixUrl: process.env.API_URL,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
