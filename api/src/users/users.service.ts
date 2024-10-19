@@ -4,7 +4,7 @@ import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  @Inject() usersRepository: UsersRepository; // Injection explicite
+  @Inject() usersRepository: UsersRepository;
   @Inject() mailService: MailService;
   async registerUser(email: string) {
     const verificationCode = Math.floor(
