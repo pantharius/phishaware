@@ -33,6 +33,6 @@ async function bootstrap() {
     credentials: true, // Si tu utilises des cookies ou des sessions
   });
 
-  await app.listen(3000);
+  await app.listen(process.env.API_PORT || 3000);
 }
 bootstrap();
