@@ -1,5 +1,4 @@
 import ky from "ky";
-import "dotenv/config";
 
 export default ky.create({
   prefixUrl: process.env.API_URL,
