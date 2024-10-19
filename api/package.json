@@ -21,7 +21,7 @@
     "db": "npm run db:mig && npm run db:up && npm run db:gen",
     "db:mig": "drizzle-kit generate",
     "db:up": "drizzle-kit migrate",
-    "db:gen": "DATABASE_URL=postgres://postgres:postgres@localhost:5555/phish_aware kysely-codegen --out-file ./db/schema.d.ts && prettier --write ./db/schema.d.ts"
+    "db:gen": "kysely-codegen --out-file ./db/schema.d.ts && prettier --write ./db/schema.d.ts"
   },
   "dependencies": {
     "@fastify/static": "^7.0.4",
