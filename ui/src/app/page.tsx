@@ -6,7 +6,7 @@ import { Shield, Lock, AlertTriangle } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="bg-gray-800 border-gray-700 bg-opacity-60 rounded-xl p-6 max-w-4xl w-full space-y-8 border">
+    <div className="bg-gray-800 border-gray-700 bg-opacity-60 rounded-xl p-6 max-w-4xl w-full space-y-8 border mt-20 lg:mt-0">
       <div className="text-center space-y-4">
         <h1 className="text-5xl text-shadow font-bold  text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-teal-300">
           Phish Aware
