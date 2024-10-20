@@ -175,7 +175,16 @@ export const DynamicForm = <T extends Record<string, any>>({
           />
         );
       case "textarea":
-        return <Textarea rows={4}></Textarea>;
+        return (
+          <Textarea
+            rows={4}
+            id={"input-" + fieldName}
+            placeholder={fieldProps.placeholder}
+            {...form.register(field.name as Path<T>)}
+            aria-invalid={form.formState.errors[fieldName] ? "true" : "false"}
+            aria-describedby={`${fieldName}-error`}
+          ></Textarea>
+        );
       case "boolean":
       case "enum":
       case "unknown":

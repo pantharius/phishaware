@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Send, MapPin, Phone, Mail } from "lucide-react";
 import { DynamicForm, DynamicFormField } from "@/components/dynamic-form";
 import { z } from "zod";
+import { contactMe } from "@/lib/api/contact";
+import api from "@/lib/api";
 
 export default function Contact() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -70,14 +72,14 @@ export default function Contact() {
   }, []);
 
   const dFields: Record<string, DynamicFormField> = {
-    name: {
+    fromName: {
       label: "Nom",
       placeholder: "Votre nom",
       schema: z
         .string()
         .min(2, { message: "Votre prénom contient au moins 2 caractères" }),
     },
-    email: {
+    from: {
       label: "Email Quantique",
       placeholder: "votre@email-quantique.com",
       schema: z.string().email("Votre email est incorrect"),
@@ -91,6 +93,37 @@ export default function Contact() {
       }),
       type: "textarea",
     },
+  };
+
+  const onSubmit = async ({
+    fromName,
+    from,
+    message,
+  }: {
+    fromName: string;
+    from: string;
+    message: string;
+  }) => {
+    try {
+      if (!fromName || !from || !message) return false;
+
+      const userId = localStorage.getItem("userId");
+      if (!userId) return "email";
+      const response = await contactMe(api, {
+        fromName,
+        from,
+        message,
+      });
+
+      if (response) return "complete";
+    } catch (error) {
+      console.error(
+        "Erreur lors de l'enregistrement de la carte bancaire :",
+        error
+      );
+    }
+
+    return false;
   };
 
   return (
@@ -108,12 +141,18 @@ export default function Contact() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 overflow-hidden group hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300">
           <CardContent className="p-6">
-            <DynamicForm dFields={dFields} formId="" onSubmit={() => {}} />
-            <Button type="submit" className="w-full mt-5">
+            <DynamicForm
+              dFields={dFields}
+              onSubmit={onSubmit}
+              formId="dynamic-form"
+            />
+          </CardContent>
+          <CardFooter>
+            <Button type={"submit"} form="dynamic-form" className="w-full">
               <Send className="w-4 h-4 mr-2" />
               Envoyer à travers l'espace-temps
             </Button>
-          </CardContent>
+          </CardFooter>
         </Card>
 
         <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 overflow-hidden group hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300">

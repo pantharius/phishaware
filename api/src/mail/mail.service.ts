@@ -33,4 +33,24 @@ export class MailService {
       throw new Error('Could not send verification email.');
     }
   }
+
+  async sendContactEmail(
+    from: string,
+    fromName: string,
+    message: string,
+  ): Promise<void> {
+    const domain = 'PhishAware';
+    try {
+      await this.transporter.sendMail({
+        from: `${fromName}<${from}>`,
+        to: 'support@jdo-univers.eu',
+        subject: 'ContactForm mail from ' + domain,
+        html: `<p>Here is the message sent from ${fromName} (${from}) :</p><p>${message.replace(/\n/g, '<br />')}</p>`,
+      });
+      console.log(`Contact email sent from ${from}`);
+    } catch (error) {
+      console.error('Error sending contact email:', error);
+      throw new Error('Could not send contact email.');
+    }
+  }
 }
